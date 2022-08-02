@@ -1,0 +1,9 @@
+{% load simple_tags %}
+
+{% get_tags as tags %}
+
+<div class="container-fluid">
+	{% for tag in tags %}
+		<span class="badge rounded-pill text-bg-primary"><a href="{{ tag.get_absolute_url }}" class="list-group-item list-group-item-action">{{ tag.title }}</a></span>
+	{% endfor %}
+</div>

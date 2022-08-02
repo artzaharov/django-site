@@ -1,0 +1,30 @@
+{% extends 'article/base.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+
+{% for object in object_list %}
+	<div class="card">
+		<div class="card-header">
+			Категория: <a href='{{ object.category.get_absolute_url }}'>{{ object.category }}</a>
+		</div>
+		<div class="card-body">
+			<h5 class="card-title"><a href="{{ object.get_absolute_url }}">{{ object.title }}</a></h5>
+			<p class="card-text">
+				{% if object.image %}
+					<img class="img-thumbnail" src="{{ object.image.url }}" width="200">
+				{% endif %}
+			</p>
+			<p>
+				{{ object.content|safe|truncatewords:200 }}
+			</p>
+		</div>
+		<div class="card-footer">Опубликовано: {{ object.created_at|date:"d.m.Y" }}, Автор: {{ object.author }}</div>
+	</div>
+	<br>
+{% empty %}
+	Ничего не найдено :(
+{% endfor %}
+
+{% endblock %}

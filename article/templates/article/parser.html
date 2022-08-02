@@ -1,0 +1,8 @@
+{% if reports %}
+	{% for r in reports %}
+	{{ r|safe }}
+	<br>
+	{% endfor %}
+	<hr>
+	All done!
+{% endif %}

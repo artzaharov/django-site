@@ -1,0 +1,12 @@
+{% load simple_tags %}
+
+{% get_popular as popular %}
+
+<div class="card">
+	<div class="card-header">Популярное</div>
+	<div class="container-fluid">
+		{% for p in popular %}
+			<a href="{{ p.get_absolute_url }}" class="list-group-item list-group-item-action">{{ p.title }}</a>
+		{% endfor %}
+	</div>
+</div>
