@@ -19,8 +19,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-# from rest_framework.views import APIView
-# from rest_framework.generics import ListCreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView
 
 
 class HomePage(ListView):
@@ -244,86 +242,16 @@ def start_parser(request):
 	return render(request, 'article/parser.html', form_data)
 
 
-# DRF ViewSet - заменяет все отдельные DRF views, чтобы не дублировать код
 class ArticleViewSet(ModelViewSet):
 	queryset = Article.objects.all()
 	serializer_class = ArticleSerializer
 	# даем доступ только прописанным категориям пользователей. Доступны 4 категории: AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 	permission_classes = (IsAuthenticatedOrReadOnly,)
 
-	# переопределяем метод get_queryset и отдаем не все записи, а, например, только первые 3
+	# переопределяем метод get_queryset
 	def get_queryset(self):
 		pk = self.kwargs.get('pk')
 		if not pk:
-			return Article.objects.all()[:3]
+			return Article.objects.all()[:100]
 
 		return Article.objects.filter(pk=pk)
-
-	# с помощью декоратора @action добавляем произвольный маршрут (в данном примере - с категориями (выводит все категории), но может быть любой)
-	@action(methods=['get'], detail=False)
-	def category(self, request):
-		cats = Category.objects.all()
-		return Response({'cats': [c.title for c in cats]})
-
-
-# DRF с привязкой к Модели
-
-# получение всех записей
-# class ArticleAPIList(ListCreateAPIView):
-# 	queryset = Article.objects.all()
-# 	serializer_class = ArticleSerializer
-
-
-# # апдейт записи
-# class ArticleAPIUpdate(UpdateAPIView):
-# 	queryset = Article.objects.all()
-# 	serializer_class = ArticleSerializer
-
-
-# # класс позволяющий получать, обновлять и удалять запись
-# class ArticleAPIDetails(RetrieveUpdateDestroyAPIView):
-# 	queryset = Article.objects.all()
-# 	serializer_class = ArticleSerializer
-
-
-# ----------------------------------------------------
-
-# DRF с определением всех методов вручную
-
-# class ArticleAPI(APIView):
-# 	def get(self, request):
-# 		articles = Article.objects.all()
-# 		return Response({'posts': ArticleSerializer(articles, many=True).data})
-
-# 	def post(self, request):
-# 		serializer = ArticleSerializer(data=request.data)
-# 		serializer.is_valid(raise_exception=True)
-# 		serializer.save()
-# 		return Response({'post': serializer.data})
-
-# 	def put(self, request, *args, **kwargs):
-# 		pk = kwargs.get('pk', None)
-# 		if not pk:
-# 			return Response({'error': 'Method PUT is not allowed'})
-
-# 		try:
-# 			instance = Article.objects.get(pk=pk)
-# 		except Exception:
-# 			return Response({'error': 'Object not found'})
-
-# 		serializer = ArticleSerializer(data=request.data, instance=instance)
-# 		serializer.is_valid(raise_exception=True)
-# 		serializer.save()
-# 		return Response({'post': serializer.data})
-
-# 	def delete():
-# 		pk = kwargs.get('pk', None)
-# 		if not pk:
-# 			return Response({'error': 'Method DELETE is not allowed'})
-
-# 		try:
-# 			instance = Article.objects.get(pk=pk)
-# 			instance.delete()
-# 		except Exception:
-# 			return Response({'error': 'Object not found'})
-# 		return Response({'post': 'Deleted post: ' + str(pk)})
